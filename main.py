@@ -10,54 +10,10 @@ from skfuzzy import control as ctrl
 # разрешение экрана), проверить её на полноту и произвести нечёткий вывод для
 # конкретных значений (выбрать случайным образом).
 
-# def main():
-#     matplotlib.use('TkAgg')
-#
-#     speed = ctrl.Antecedent(np.arange(0, 200), 'speed')
-#     temperature = ctrl.Antecedent(np.arange(16, 30), 'temperature')
-#     consumption = ctrl.Consequent(np.arange(5, 25), 'consumption')
-#
-#     consumption.automf(names=['small', 'medium', 'high'])
-#
-#     speed['small'] = fuzz.trapmf(speed.universe, [0, 0, 30, 60])
-#     speed['medium'] = fuzz.trapmf(speed.universe, [50, 70, 120, 150])
-#     speed['high'] = fuzz.trapmf(speed.universe, [110, 140, 200, 200])
-#
-#     temperature['low'] = fuzz.trapmf(temperature.universe, [16, 16, 20, 25])
-#     temperature['high'] = fuzz.trapmf(temperature.universe, [20, 25, 30, 50])
-#
-#     speed.view()
-#     temperature.view()
-#     consumption.view()
-#
-#     rule1 = ctrl.Rule(speed['small'] & temperature['low'], consumption['small'])
-#     rule2 = ctrl.Rule(speed['small'] & temperature['high'], consumption['small'])
-#     rule3 = ctrl.Rule(speed['medium'] & temperature['low'], consumption['high'])
-#     rule4 = ctrl.Rule(speed['medium'] & temperature['high'], consumption['medium'])
-#     rule5 = ctrl.Rule(speed['high'] & temperature['low'], consumption['high'])
-#     rule6 = ctrl.Rule(speed['high'] & temperature['high'], consumption['high'])
-#
-#     consumption_ctrl = ctrl.ControlSystem([rule1, rule2, rule3, rule4, rule5, rule6])
-#     consumption_simulator = ctrl.ControlSystemSimulation(consumption_ctrl)
-#
-#     #
-#     consumption_simulator.input['speed'] = 110
-#     consumption_simulator.input['temperature'] = 22
-#
-#     #
-#     consumption_simulator.compute()
-#     print(consumption_simulator.output['consumption'])
-#
-#     speed.view(sim=consumption_simulator)
-#     temperature.view(sim=consumption_simulator)
-#     consumption.view(sim=consumption_simulator)
-#
-#     plt.show()
-
 
 def main():
     graphical_need = ctrl.Antecedent(np.arange(0, 100), 'graphical_need')
-    resolution = ctrl.Antecedent(np.arange(480 * 800, 4096 * 2160, 10), 'resolution')
+    resolution = ctrl.Antecedent(np.arange(480 * 800, 4096 * 2160, 1000000), 'resolution')
     electricity = ctrl.Antecedent(np.arange(450, 750, 10), 'electricity')
     price = ctrl.Consequent(np.arange(500, 5750), 'price')
 
@@ -97,14 +53,33 @@ def main():
     rule17 = ctrl.Rule(graphical_need['high'] & resolution['low'] & electricity['high'], price['low'])
     rule18 = ctrl.Rule(graphical_need['high'] & resolution['high'] & electricity['low'], price['high'])
 
+    # rule1 = ctrl.Rule(graphical_need['low'] & electricity['low'], price['high'])
+    # rule2 = ctrl.Rule(graphical_need['high'] & electricity['medium'], price['high'])
+    # rule3 = ctrl.Rule(graphical_need['low'] & electricity['high'], price['medium'])
+    # rule4 = ctrl.Rule(graphical_need['high'] & electricity['low'], price['high'])
+    # rule5 = ctrl.Rule(graphical_need['low']& electricity['medium'], price['low'])
+    # rule6 = ctrl.Rule(graphical_need['high'] & electricity['high'], price['medium'])
+
+    # rule1 = ctrl.Rule(resolution['low'] & electricity['low'], price['medium'])
+    # rule2 = ctrl.Rule(resolution['medium'] & electricity['low'], price['high'])
+    # rule3 = ctrl.Rule(resolution['high'] & electricity['low'], price['high'])
+    # rule4 = ctrl.Rule(resolution['low'] & electricity['medium'], price['low'])
+    # rule5 = ctrl.Rule(resolution['medium'] & electricity['medium'], price['low'])
+    # rule6 = ctrl.Rule(resolution['high'] & electricity['medium'], price['medium'])
+    # rule4 = ctrl.Rule(resolution['low'] & electricity['high'], price['low'])
+    # rule5 = ctrl.Rule(resolution['medium'] & electricity['high'], price['medium'])
+    # rule6 = ctrl.Rule(resolution['high'] & electricity['high'], price['medium'])
+
     price_ctrl = ctrl.ControlSystem(
         [rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9, rule10, rule11, rule12, rule13, rule14, rule15,
          rule16, rule17, rule18])
+    # price_ctrl = ctrl.ControlSystem(
+    #     [rule1, rule2, rule3, rule4, rule5, rule6])
     price_simulator = ctrl.ControlSystemSimulation(price_ctrl)
 
-    price_simulator.input['graphical_need'] = 0
-    price_simulator.input['resolution'] = 1920 * 1080
-    price_simulator.input['electricity'] = 600
+    price_simulator.input['graphical_need'] = 80
+    price_simulator.input['resolution'] = 2000 * 1080
+    price_simulator.input['electricity'] = 630
 
     price_simulator.compute()
     print(price_simulator.output['price'])
